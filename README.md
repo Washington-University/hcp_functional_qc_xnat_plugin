@@ -1,4 +1,4 @@
-# Upenn HCP Dicom Object Identifier Plugin #
+# HCP QC XNAT render Plugin #
 
 This plugin contains custom dicom object identifiers to route dicom data to projects. 
 
