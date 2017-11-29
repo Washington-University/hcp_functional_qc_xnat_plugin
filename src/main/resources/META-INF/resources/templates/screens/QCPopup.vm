@@ -1,0 +1,254 @@
+<script type="text/javascript" src="/scripts/jquery/jquery.min.js">
+</script>
+
+<script type="text/javascript">
+
+function opener(name,target,specs) {
+         popup=window.open(name,target,specs);
+         popup.focus();
+}
+
+function popup_init(scanIndex, total, type){
+	 var json = eval ('( ${data.getParameters().getString("json")} )');
+         //alert('${data.getParameters().getString("json")}');
+//       alert(json.scans[scanIndex].session);
+//document.getElementById("main").innerHTML='${data.getParameters().getString("json")}';
+	var prev = '';
+	var next = '';
+     if(scanIndex>0){
+	prev=' <a href="javascript:popup_init('+(parseInt(scanIndex)-parseInt(1))+','+total+','+type+')"><img class="scan" src="$content.getURI("images/left.gif")" alt="" style="border-style: none"/></a> ';		
+	 }
+	  else{
+		prev=' <a href="javascript:popup_init('+total+','+total+','+type+')"><img class="scan" src="$content.getURI("images/left.gif")" alt="" style="border-style: none"/></a> ';
+		 }
+		  if(scanIndex<total){
+                next=' <a href="javascript:popup_init('+(parseInt(scanIndex)+parseInt(1))+','+total+','+type+')"><img class="scan" src="$content.getURI("images/right.gif")" alt="" style="border-style: none"/></a> ';
+         }
+         else{
+                next=' <a href="javascript:popup_init(0,'+total+','+type+')"><img class="scan" src="$content.getURI("images/right.gif")" alt="" style="border-style: none"/></a> ';
+         }
+
+         if(type=='1'){
+document.getElementById("main").innerHTML ='<div class="edit_header1">Motion QC Summary: '+json.scans[scanIndex].session_name+', Scan '+prev+json.scans[scanIndex].scan+next+'<span style="float:right">'
++'<a href="javascript:void(0)" onclick="popup_init('+scanIndex+','+total+',2);"><img class="scan" src="$content.getURI("images/button-BIRN-QA.png")" alt="" style="padding-right: 5px; border-style: none" />View BIRN</a>'
++'<a href="javascript:void(0)" onclick="popup_init('+scanIndex+','+total+',0);"><img class="scan" src="$content.getURI("images/icon-view-montage.png")" alt="" style="padding-right: 5px; padding-left: 10px; border-style: none" />View Montage</a></span></div>'
++'<table bgColor=white cellPadding=3 cellSpacing=2 >'
++'<tr><TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Scan </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Abs RMS Mean (mm) </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Rel RMS Mean (mm) </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> % Rel RMS > 0.15 </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> % Rel RMS > 0.3 </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> 95% Rel RMS </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> FWHM </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> SD </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> tSNR Median </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> DVAR Mean </TH>'
++'<TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> DVAR 2nd Moment </TH></tr><tr>'
++'<tr><td>'+json.scans[scanIndex].scan+'('+json.scans[scanIndex].scan_name+')</td><td>'+json.scans[scanIndex].abs_rms+'</td><td>'+json.scans[scanIndex].rel_rms+'</td><td>'+json.scans[scanIndex].rms15+'</td>'
++'<td>'+json.scans[scanIndex].rms3+'<td>'+json.scans[scanIndex].rel_rms95+'</td>'+'<td>'+json.scans[scanIndex].fwhm+'</td>'+'<td>'+json.scans[scanIndex].sd+'</td>'+'</td><td>'+json.scans[scanIndex].tsnr+'</td><td>'+json.scans[scanIndex].dvar+'</a></td><td>'+json.scans[scanIndex].dvar2+'</td></tr></table>'
++'<br><img src="$content.getURI("data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/dvars.png")" alt="dvars"/>'
++'<br><img src="$content.getURI("data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/disp_rel.png")" alt="disp_rel"/>'
++'<br><img src="$content.getURI("data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/disp_abs.png")" alt="disp_abs"/>'
++'<br><img src="$content.getURI("data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/smoothness.png")" alt="smooth"/>'
++'<br><img src="$content.getURI("data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/trans.png")" alt="trans"/>'
++'<br><img src="$content.getURI("data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/rot.png")" alt="rot"/>';
+         }
+else if(type=='0'){
+	var _active_tab_data_matches = $('#slider .slide.active').attr("data-matches");
+	var _active_box_data_matches = $('#slider .menu .active').attr("data-matches");
+
+	document.getElementById("main").innerHTML ='<div class="edit_header1">Motion QC Summary: '+json.scans[scanIndex].session_name+', Scan '+prev+json.scans[scanIndex].scan+next+'<span style="float:right">'
+	+'<a href="javascript:void(0)" onclick="popup_init('+scanIndex+','+total+',2);"><img class="scan" src="$content.getURI("images/button-BIRN-QA.png")" alt="" style="padding-right: 5px; border-style: none" />View BIRN</a>'
+	+'<a href="javascript:void(0)" onclick="popup_init('+scanIndex+','+total+',1);"><img class="scan" src="$content.getURI("images/icon-view-graph.png")" alt="" style="padding-right: 5px; padding-left: 10px; border-style: none" />View Graphs</a></\
+	span></div>'
+	+'<div id="slider" style="float:left"><div class="pad"><ul class="menu horiz"><li class="tab1" data-matches="slide1">tSNR</li>'
+	+'<li class="tab2" data-matches="slide2">Std</li><li class="tab3" data-matches="slide3">Mean</li><li class="tab4" data-matches="slide4">Brain Mask</li></ul>'
+	+'<div class="clear"></div><div class="slides"><div class="slide slide1" data-matches="tab1">'
+	+'<img class="scan" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_norm_tSNR_snaps/fmri_mcf_norm_tSNR_Montage.png" alt=""/>'
+	+'<img class="scale" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_norm_tSNR_snaps/fmri_mcf_norm_tSNR_Colorbar.png" alt=""/>'
+	+'</div><div class="slide slide2" data-matches="tab2">'
+	+'<img class="scan" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_norm_std_snaps/fmri_mcf_norm_std_Montage.png" alt=""/>'
+	+'<img class="scale" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_norm_std_snaps/fmri_mcf_norm_std_Colorbar.png" alt=""/>'
+	+'</div><div class="slide slide3" data-matches="tab3">'
+	+'<img class="scan" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_norm_mean_snaps/fmri_mcf_norm_mean_Montage.png" alt=""/>'
+	+'<img class="scale" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_norm_mean_snaps/fmri_mcf_norm_mean_Colorbar.png" alt=""/>'
+	+'</div><div class="slide slide4" data-matches="tab4">'
+	+'<img class="scan" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_meanvol_brain_mask_snaps/fmri_mcf_meanvol_brain_mask_Montage.png" alt\
+	=""/>'
+	+'<img class="scale" src="/data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/resources/MOTIONOUTLIER_DATA/files/fmri_mcf_meanvol_brain_mask_snaps/fmri_mcf_meanvol_brain_mask_Colorbar.png" a\
+	lt=""/>'
+	+'</div><div class="prev" data-matches="" style=""></div><div class="next" data-matches="" style=""></div></div></div></div>';
+
+    $('#slider .slide').hide();
+	if(_active_box_data_matches!=undefined && _active_tab_data_matches!=undefined){
+		$('#slider .slide').first().addClass('first');
+		$('#slider .menu li').first().addClass('first');
+		$('#slider .menu li').last().addClass('last');
+		$('#slider .slide').last().addClass('last');
+		$( "."+_active_tab_data_matches ).addClass('active');
+		$( "."+_active_box_data_matches ).show().addClass('active');
+	}
+	else{
+		$('#slider .slide').first().show().addClass('first active');
+		$('#slider .menu li').first().addClass('first active');
+		$('#slider .menu li').last().addClass('last');
+		$('#slider .slide').last().addClass('last');
+	}
+
+}
+
+else if(type=='2'){
+document.getElementById("main").innerHTML ='<div class="edit_header1">BIRN Human QA: '+json.scans[scanIndex].session_name+', Scan '+prev+json.scans[scanIndex].scan+next+'<span style="float:right">'
++'<a href="javascript:void(0)" onclick="popup_init('+scanIndex+','+total+',1);"><img class="scan" src="$content.getURI("images/icon-view-graph.png")" alt="" style="padding-right: 5px; padding-left: 10px; border-style: none" />View Graphs</a>'
++'<a href="javascript:void(0)" onclick="popup_init('+scanIndex+','+total+',0);"><img class="scan" src="$content.getURI("images/icon-view-montage.png")" alt="" style="padding-right: 5px; padding-left: 10px; border-style: none" />View Montage</a></span></div>'
++'<iframe src="$content.getURI("data/archive/experiments/'+json.scans[scanIndex].session+'/assessors/'+json.scans[scanIndex].assessor+'/out/resources/BIRN_DATA/files/web_access_index.html")" width="930" height="940" name="birnIframe" class="birnIframe">';
+resizeFrame();
+jQuery.event.add(window, "resize", resizeFrame);
+
+}
+
+}
+
+
+</script>
+<link type="text/css" rel="stylesheet" href="$content.getURI("style/xnat.css")">
+
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            var fade_speed = 300;
+
+            // click slider tabs
+            $('body').on('click','#slider .menu li',function(){
+                if ($(this).hasClass('active')){
+                    return false ;
+                }
+                else {
+                    $('#slider .menu li').removeClass('active');
+                    $(this).addClass('active');
+                    var _my_slide = $(this).attr('data-matches');
+                    $('#slider .slide').fadeOut(fade_speed).removeClass('active');
+                    $('#slider .slide.'+ _my_slide).fadeIn(fade_speed).addClass('active');
+                    $('#slider .slide .slide_content').hide();
+                    $('#slider .slide.' + _my_slide + ' .slide_content').delay(300).fadeIn(500);
+                }
+            });
+            
+
+            // fade in slider arrows
+            $('body').on('hover','#slider .slides',function(){
+                $('#slider .next, #slider .prev').fadeToggle(100);
+            });
+
+            
+            // click slider arrows
+            $('body').on('click','#slider .next, #slider .prev',function(){
+
+                var _active_box = $(this).closest('#slider').find('.slide.active');
+                var _active_tab = $(this).closest('#slider').find('.menu .active'); $('#slider .menu li').removeClass('active');
+                var fadeActive = function() {
+                    $(_active_box).fadeOut(fade_speed).removeClass('active');
+                };
+                
+                if ($(this).hasClass('next')){
+                    if (_active_box.hasClass('last')){
+                        $('#slider .slide .slide_content').hide();
+                        $('#slider .slide.first').fadeIn(fade_speed).addClass('active').find('.slide_content').delay(300).fadeIn(500);
+                        fadeActive();
+                        //var _my_tab = $(this).attr('data-matches');
+                        $('#slider .menu .first').addClass('active');
+                    }
+                    else {
+                        $('#slider .slide .slide_content').hide();
+                        $(_active_box).next().fadeIn(fade_speed).addClass('active').find('.slide_content').delay(300).fadeIn(500);
+                        fadeActive();
+                        $(_active_tab).next().addClass('active');
+                    }
+                }
+
+                if ($(this).hasClass('prev')){
+                    if (_active_box.hasClass('first')){
+                        $('#slider .slide .slide_content').hide();
+                        $('#slider .slide.last').fadeIn(fade_speed).addClass('active').find('.slide_content').delay(300).fadeIn(500);
+                        fadeActive();
+                        $('#slider .menu .last').addClass('active');
+                    }
+                    else {
+                        $('#slider .slide .slide_content').hide();
+                        $(_active_box).prev().fadeIn(fade_speed).addClass('active').find('.slide_content').delay(300).fadeIn(500);
+                        fadeActive();
+                        $(_active_tab).prev().addClass('active');
+                    }
+                }
+            
+            });
+            
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+function resizeFrame() 
+{
+    var h = $(window).height()-70;
+    var w = $(window).width()-35;
+    $('.birnIframe').css('height', h+'px');
+    $('.birnIframe').css('width', w+'px');
+}
+
+
+
+        
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+div.content {
+      padding-top: 10px;
+      padding-right: 10px;
+      padding-bottom: 10px;
+      padding-left: 10px;
+    }
+body, html body, * body { margin: 0 ; background: #fff ; font-family: Arial, Helvetica, sans-serif !important ; font-size: 12px ; line-height: 15px ; /* letter-spacing: 0.02em ; */ position: relative ; }
+.ic, .ic_spacer { display: none ; visibility: hidden ; }
+
+
+
+#slider { overflow: hidden ; }
+#slider .menu { height: 32px ; overflow: hidden ; } #slider .menu li { padding: 0 10px ; line-height: 32px ; vertical-align: middle ; font-size: 12px ; font-weight: bold ; letter-spacing: 0.02em ; color: #555 ; background: #eee ; border: 1px solid #ccc ; border-left: none ; border-bottom: none ; } #slider .menu li {  }
+.ie7 #slider .menu li span,
+.ie8 #slider .menu li span { display: none ; } #slider .menu li:hover { cursor: pointer ; } #slider .menu li.first { border-left: 1px solid #ccc !important ; } #slider .menu li.active { color: #fff ; background: #084FAB ; border: 1px solid green ; border-bottom: none ; } #slider .menu li.active:hover { cursor: default ; } #slider .menu li.first.active { border-left: 1px solid #084FAB !important ; } #slider .slides { width: 708px ; height: 636px ; position: relative ; border: none ; background-color:black; } #slider .slide { display: none ; width: 708px ; height: 636px ; margin: 0 ; padding: 0 ; position: absolute ; left: 0 ; top: 0 ; overflow: hidden ; background: /* #159 */ #000 ; } #slider .slide:first-child { display: block
+ ; }
+#slider .slide > img { position: absolute ; } #slider .slide .scan { width: 636px ; height: 636px ; left: 0 ; top: 0 ; } #slider .slide .scale { width: 72px ; height: 636px ; right: 0 ; top: 0 ; } 
+ #slider .next, #slider .prev { display: none ; width: 100px ; height: 636px ; /* margin-top: -75px ; */ position: absolute ; top: 0 ; z-index: 99 ; } #slider .next { right: 0 ; background: transparent url('/images/arrow-rt.png') center right no-repeat ; } #slider .prev { left: 0 ; background: transparent url('/images/arrow-lt.png') center left no-repeat ; } #slider .next:hover { cursor: pointer ; } #slider .prev:hover { cursor: pointer ; }
+
+
+
+
+.underscore { border-bottom: 2px solid #f93 ; padding-bottom: 1px ; padding-right: 20px ; padding-left: 5px ; }
+table {font-size:12px}
+</style>
+<div class="content" id="main">
+</div>
+<script type="text/javascript">
+popup_init('${data.getParameters().getInt("scan")}', '${data.getParameters().getInt("total")}', '${data.getParameters().getInt("type")}');
+</script>

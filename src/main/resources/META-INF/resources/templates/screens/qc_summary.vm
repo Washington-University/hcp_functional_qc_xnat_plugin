@@ -1,0 +1,291 @@
+<script type="text/javascript">
+var scanTotal = 0;
+var jsonString = '{"scans": [';
+
+function opener(name,target,specs) {
+	 popup=window.open(name,target,specs);
+	 popup.focus(); 
+}
+
+function qc_popup(currScan, type){
+	 var randNum = Math.floor(Math.random()*1000000000);
+	 popup=window.open('/app/template/QCPopup.vm?scan='+currScan+'&total='+(parseInt(scanTotal)-1)+'&type='+type, 'QCPopup'+randNum,'width=960,height=1000,scrollbars=yes,resizable=yes');
+	 document.getElementById("qc").target= 'QCPopup'+randNum;
+	 var form = document.getElementById("qc");
+	 form.action = '/app/template/QCPopup.vm?scan='+currScan+'&total='+(parseInt(scanTotal)-1)+'&type='+type;
+	 var json = document.createElement("input");              
+	 json.setAttribute("type", "hidden");
+         json.setAttribute("name", "json");
+         json.setAttribute("value", jsonString);
+         form.appendChild(json);
+
+	 form.submit();	 
+
+}
+
+</script>
+
+#set($scanAssessors =$!om.getScanAssessors())
+#if ($scanAssessors.size()>0)
+<tr>
+<td align=left colspan=2 valign=top>
+	<BR/><BR/>
+#set($scanCounter=7900)
+
+<A name="LINK${scanCounter}" HREF="#LINK${scanCounter}" onClick=" return blocking($scanCounter);"><img ID="IMG$scanCounter" src="$content.getURI("images/plus.jpg")" border=0> <font face="$ui.sansSerifFonts" size="4" style="line-height:18px;"><b>$displayManager.getSingularDisplayNameForImageSession() QC Status</b></font></a>
+
+	<span ID="span$!scanCounter" style="position:relative; display:none;">
+		<br>
+		<table BORDER=1 STYLE="	border-collapse: collapse;"><tr><td>
+					<table>
+						<tr>
+                        	<th> </th> 
+                    		<th>Status </th>
+                    		<th>Rater </th>
+                    		<th>Date </th>
+                        </tr>
+                        #if($!om.getProtocolValidation())
+                        	#set ( $pv = $om.getProtocolValidation())
+                        	#set ( $pvID = $!pv.getProperty("ID"))
+                        	#set ( $pvField = "${pv.getXSIType()}.ID")
+                        	<tr>
+                        		<th align="left">$!pv.getHeader()</th>
+                        		<td>
+						#if($user.canRead($pv))
+       		                 			#set ( $pvUrl = "$link.setAction('DisplayItemAction').addPathInfo('search_element',$!pv.getXSIType()).addPathInfo('search_field',$pvField).addPathInfo('search_value',$pvID).addPathInfo('popup',$popup).addPathInfo('project',$project)" )  
+                        			<a href="$pvUrl">
+                        				#if ($!pv.getCheck_status().equals("1")||$!pv.getCheck_status().equalsIgnoreCase("pass")||$!pv.getCheck_status().equalsIgnoreCase("passed"))
+                        					Passed
+                        				#elseif($!pv.getCheck_status().equals("0")||$!pv.getCheck_status().equalsIgnoreCase("fail")||$!pv.getCheck_status().equalsIgnoreCase("failed"))
+                        					Failed
+                        				#else
+                        					Unknown
+                        				#end
+                        			</a>
+						#else
+							Unknown
+						#end
+
+                        		</td>
+                        		<td>
+                        		</td>
+                        		<td>
+                        			$!pv.getStringProperty("date")
+                        		</td>
+                        	</tr>
+                        #end
+                        #if($!om.getScreeningAssessment())
+                        	#set ( $scr = $om.getScreeningAssessment())
+                        	#set ( $scrID = $!scr.getProperty("ID"))
+                        	#set ( $scrField = "${scr.getXSIType()}.ID")
+                        	<tr>
+                        		<th align="left">$!scr.getHeader()</th>
+                        		<td>
+						#if($user.canRead($scr))
+                        				#set ( $scrUrl = "$link.setAction('DisplayItemAction').addPathInfo('search_element',$!scr.getXSIType()).addPathInfo('search_field',$scrField).addPathInfo('search_value',$scrID).addPathInfo('popup',$popup).addPathInfo('project',$project)" )  
+                        			<a href="$scrUrl">
+                        				#if ($!scr.getStringProperty("pass").equals("1")||$!scr.getStringProperty("pass").equalsIgnoreCase("pass")||$!scr.getStringProperty("pass").equalsIgnoreCase("passed"))
+                        					Passed
+                        				#elseif($!scr.getStringProperty("pass").equals("0")||$!scr.getStringProperty("pass").equalsIgnoreCase("fail")||$!scr.getStringProperty("pass").equalsIgnoreCase("failed"))
+                        					Failed
+                        				#else
+                        					Unknown
+                        				#end
+                        			</a>
+						#else
+							Unknown
+						#end
+                        		</td>
+                        		<td>
+                        			$!scr.getStringProperty("rater")
+                        		</td>
+                        		<td>
+                        			$!scr.getStringProperty("date")
+                        		</td>
+                        	</tr>
+                        #end
+                        #if($!om.getManualQC())
+                        	#set ( $qc = $om.getManualQC())
+                        	#set ( $qcID = $!qc.getProperty("ID"))
+                        	#set ( $qcField = "${qc.getXSIType()}.ID")
+                        	<tr>
+                        		<th align="left">$!qc.getHeader()</th>
+                        		<td>
+						#if($user.canRead($scr))
+                        				#set ( $qcUrl = "$link.setAction('DisplayItemAction').addPathInfo('search_element',$!qc.getXSIType()).addPathInfo('search_field',$qcField).addPathInfo('search_value',$qcID).addPathInfo('popup',$popup).addPathInfo('project',$project)" )  
+                        			<a href="$qcUrl">
+                        				#if ($!qc.getStringProperty("pass").equals("1")||$!qc.getStringProperty("pass").equalsIgnoreCase("pass")||$!qc.getStringProperty("pass").equalsIgnoreCase("passed"))
+                        					Passed
+                        				#elseif($!qc.getStringProperty("pass").equals("0")||$!qc.getStringProperty("pass").equalsIgnoreCase("fail")||$!qc.getStringProperty("pass").equalsIgnoreCase("failed"))
+                        					Failed
+                        				#else
+                        					Unknown
+                        				#end
+                        			</a>
+						#else
+							Unknown
+						#end
+                        		</td>
+                        		<td>
+                        			$!qc.getStringProperty("rater")
+                        		</td>
+                        		<td>
+                        			$!qc.getStringProperty("date")
+                        		</td>
+                        	</tr>
+                        #end
+
+		
+    </table></td></tr>
+
+</table></span>
+
+#set($scanCount = 0)
+#set($first = 0)
+#set($last = $om.getSortedMinimalLoadAssessors().size())
+#set($range = [$first..$last])
+#set($showHeader = true)
+
+
+	 <TR>
+	  <TD NOWRAP>
+
+		<BR>                        
+		<DIV class="edit_header1">Summary of  QC</DIV>
+
+	   <table bgColor=white cellPadding=3 cellSpacing=2>
+
+<form id="qc" method="POST">
+#foreach ($i in $range)
+  #set($assessor = $om.getSortedMinimalLoadAssessors().get($i))
+  #if($assessor.canRead($user))
+   #set ( $assessorID = $!assessor.getProperty("ID"))
+   #set ( $assessorField = "${assessor.getXSIType()}.ID")
+   #if(($assessor.getHeader() && $assessor.getHeader()=="FUNCTIONAL_QC") || ($user.getDisplayManager().getDisplayNameForElement($assessor.getXSIType())=="FUNCTIONAL_QC"))
+      #if ($showHeader)
+
+		<tr>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Scan</TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Abs RMS<br/>Mean (mm) </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Rel RMS<br/>Mean (mm) </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> % Rel RMS<br/> > 0.15 </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> % Rel RMS<br/> > 0.3 </TH>
+                  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> 95% Rel<br/>RMS </TH>
+                  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> FWHM </TH>
+                  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> SD </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> tSNR<br/>Median </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> DVAR Mean </TH>
+                  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> DVAR 2nd<br/>Moment </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Montage </TH>
+                  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Graphs </TH>
+                  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> BIRN<br/>Human QA</TH>
+		</tr>
+
+       #end
+      #set($showHeader = false)
+
+       #set ($qcAssessorScans = $assessor.getScans_scan())
+
+	   #foreach($qcScan in $qcAssessorScans)
+		#set ($dvarImg = $content.getURI("/data/archive/experiments/$om.getId()/assessors/$assessorID/resources/MOTIONOUTLIER_DATA/files/dvars.png"))
+		#set ($session_name = $!om.getIdentifier($project,true))
+		#set ($scan_name = $om.getScanById($qcScan.getId()).getSeriesDescription())		
+		#set ($abs_rms = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_ABS_MEAN_RMS").getAdditionalstatistics(),3))
+		#set ($rel_rms = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_REL_MEAN_RMS").getAdditionalstatistics(),3))
+		#set ($rms3 = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_PERCENTAGE_REL_RMS_0.3").getAdditionalstatistics(),2))
+     		#set ($rms15 = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_PERCENTAGE_REL_RMS_0.15").getAdditionalstatistics(),2))
+     		#set ($tsnr = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_MEDIAN_tSNR").getAdditionalstatistics(),1))
+     		#set ($dvar = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_MEAN_DVAR").getAdditionalstatistics(),1))
+                #set ($dvar2 = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_DVAR_2Moment").getAdditionalstatistics(),2))
+                #set ($rms95 = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_95Percentile_REL_RMS").getAdditionalstatistics(),3))
+                #set ($fwhm = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_FWHM").getAdditionalstatistics(),2))
+                #set ($sd = $turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("MOTION_QC_SD").getAdditionalstatistics(),1))
+<script type="text/javascript">
+	if(scanTotal>0){
+		jsonString += ',';
+	}
+	jsonString += '{ "scan":"${qcScan.getId()}" , "scanIndex":"${scanCount}" , "session":"${om.getId()}" , "session_name":"${session_name}" , "assessor":"${assessorID}" , "scan_name":"${scan_name}" , "abs_rms":"${abs_rms}" , "rel_rms":"${rel_rms}" , "rel_rms95":"${rms95}" , "rms15":"${rms15}" , "rms3":"${rms3}" , "tsnr":"${tsnr}" , "dvar":"${dvar}" , "dvar2":"${dvar2}" , "rms95":"${rms95}" , "fwhm":"${fwhm}" , "sd":"${sd}" }';
+</script>
+
+		  <tr>
+			  <td>$!qcScan.getId()($!scan_name)</td>
+			  <td>$!abs_rms</td>
+			  <td>$!rel_rms</td>
+			  <td>$!rms15</td>
+			  <td>$!rms3</td>
+			  <td>$!rms95</td>
+			  <td>$!fwhm</td>
+			  <td>$!sd</td>
+			  <td>$!tsnr</td>
+			  <td>$!dvar</td>
+			  <td>$!dvar2</td>
+			  <td><a href="javascript:void(0)" onclick="window.qc_popup('${scanCount}','0')">$dvar</a></td>
+			  <td><a href="javascript:void(0)" onclick="window.qc_popup('${scanCount}','1')">View</a></td>
+			  <td><a href="javascript:void(0)" onclick="window.qc_popup('${scanCount}','2')">View BIRN</a></td>
+		  </tr>
+#set($scanCount= $scanCount+1)
+<script type="text/javascript">
+	scanTotal++;
+</script>
+	   #end
+
+   #elseif(($assessor.getHeader() && $assessor.getHeader()=="STRUCTURAL_QC") || ($user.getDisplayManager().getDisplayNameForElement($assessor.getXSIType())=="STRUCTURAL_QC"))
+       #if ($showHeader)
+		<tr>
+		  <TH  class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Scan</TH>
+		  <TH  class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> SIMPLESNR SNR </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> SIMPLESNR SigMean </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> SIMPLESNR SigSTD </TH>
+		</tr>
+
+       #end
+       #set($showHeader=false)	
+       #set ($qcAssessorScans = $assessor.getScans_scan())
+
+	   #foreach($qcScan in $qcAssessorScans)
+		#set ($dvarImg = $content.getURI("/data/archive/experiments/$om.getId()/assessors/$assessorID/resources/MOTIONOUTLIER_DATA/files/dvars.png"))
+
+		  <tr>
+			  <td>$!qcScan.getId()($om.getScanById($qcScan.getId()).getSeriesDescription())</td>
+			  <td>$turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("SIMPLESNR_SNR").getAdditionalstatistics(),1)</td>
+			  <td>$turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("SIMPLESNR_SIGMEAN").getAdditionalstatistics(),1)</td>
+			  <td>$turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("SIMPLESNR_SIGSTD").getAdditionalstatistics(),1)</td>
+		  </tr>
+	   #end
+
+   #elseif(($assessor.getHeader() && $assessor.getHeader()=="DIFFUSION_QC") || ($user.getDisplayManager().getDisplayNameForElement($assessor.getXSIType())=="DIFFUSION_QC"))
+       #if ($showHeader)
+		<tr>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> Scan </TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> AVG B0 Mean</TH>
+		  <TH class="underscore" border-top-style:none; border-right-style:none; border-bottom-style:solid; border-left-style:none;" align=left> AVG B0 Std </TH>
+		</tr>
+
+       #end
+       #set($showHeader = false)
+       #set ($qcAssessorScans = $assessor.getScans_scan())
+
+	   #foreach($qcScan in $qcAssessorScans)
+		#set ($meanImg = $content.getURI("/data/archive/experiments/$om.getId()/assessors/$assessorID/resources/B0Statistics_DATA/files/${om.getLabel()}_${om.getScanById($qcScan.getId()).getSeriesDescription()}_b0Statistics_b0Mean.gif"))
+		  <tr>
+			  <td>$!qcScan.getId() ($om.getScanById($qcScan.getId()).getSeriesDescription())</td>
+			  <td><a href="$meanImg">$turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("AVG_B0Mean").getAdditionalstatistics(),1)</a></td>
+			  <td>$turbineUtils.formatNumber($!qcScan.getScanstatistics().getAdditionalstatistics("AVG_B0Std").getAdditionalstatistics(),1)</td>
+		  </tr>
+	   #end
+
+
+    #end
+
+
+ #end
+ #end
+</form>
+<script type="text/javascript">
+jsonString+=']}';
+</script>
+  </table>
+   </TD>
+  </TR>
+<TR><TD>
+#end
