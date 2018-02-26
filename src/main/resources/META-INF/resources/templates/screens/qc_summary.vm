@@ -142,7 +142,7 @@ function qc_popup(currScan, type){
 
 #set($scanCount = 0)
 #set($first = 0)
-#set($last = $om.getSortedMinimalLoadAssessors().size())
+#set($last = $om.getMinimalLoadAssessors().size())
 #set($range = [$first..$last])
 #set($showHeader = true)
 
@@ -157,7 +157,7 @@ function qc_popup(currScan, type){
 
 <form id="qc" method="POST">
 #foreach ($i in $range)
-  #set($assessor = $om.getSortedMinimalLoadAssessors().get($i))
+  #set($assessor = $om.getMinimalLoadAssessors().get($i))
   #if($assessor.canRead($user))
    #set ( $assessorID = $!assessor.getProperty("ID"))
    #set ( $assessorField = "${assessor.getXSIType()}.ID")
